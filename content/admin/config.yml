@@ -5,7 +5,7 @@ backend:
 production:
   backend:
     name: github-api
-    repo: netlify-templates/pelican-netlify-cms # Change this to your repo
+    repo: bassio/testpelican # Change this to your repo
     branch: master
 
 media_folder: "content/uploads" # Folder where user uploaded files should go
@@ -24,6 +24,7 @@ collections: # A list of collections the CMS should be able to edit
     meta: # Meta data fields. Just like fields, but without any preview element
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Categoy", name: "category", widget: "string", default: "General"}
+      
   - name: "pages"
     label: "Pages"
     files:
@@ -34,3 +35,148 @@ collections: # A list of collections the CMS should be able to edit
         fields:
           - {label: "Page Title", name: "title", widget: "string"}
           - {label: "Body", name: "body", widget: "markdown"}
+
+  - name: "musicalwork"
+    label: "Musical Works"
+    label_singular: "Musical Work"
+    folder: "content/data/musicalwork"
+    extension: "json"
+    format: "json"
+    create: true
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Title (Ar)", name: "title_ar", widget: "datetime"}
+      - {label: "Alternate Titles", name: "alternate_titles", widget: "list", allow_add: true,
+            field: {label: "Alternate Title", name: "alt_title", widget: "string"}
+         }
+      - {label: "Lyrics", name: "lyrics", widget: "text"}
+      - {label: "Genre", name: "genre", widget: "relation",
+         collection: "genre", 
+         searchFields: ["name"],
+         valueField: "name",
+         displayFields: ["name"],
+         multiple: false
+         }
+      - {label: "Contributors",
+         name: "contributors",
+         widget: "list",
+         allow_add: true,
+         fields: [
+            {name: "contributor_role",
+             label: "Role",
+             widget: "select",
+             options: ["Composer", "Writer"]
+            },
+            {name: "contributor",
+             label: "Contributor",
+             widget: "relation",
+             collection: "agent", 
+             searchFields: ["name"],
+             valueField: "name",
+             displayFields: ["name"]}
+             ]
+         }
+         
+  - name: "genre"
+    label: "Genres"
+    label_singular: "Genre"
+    folder: "content/data/genre"
+    extension: "json"
+    format: "json"
+    create: true
+    identifier_field: "name"
+    fields:
+      - {label: "Name", name: "name", widget: "string"}
+      - {label: "Name (Ar)", name: "name_ar", widget: "string"}
+
+  - name: "agent"
+    label: "Agents"
+    label_singular: "Agent"
+    folder: "content/data/agent"
+    extension: "json"
+    format: "json"
+    create: true
+    identifier_field: "name"
+    fields:
+      - {label: "Name", name: "name", widget: "string"}
+      - {label: "Name (Ar)", name: "name_ar", widget: "datetime"}
+      - {label: "Alternate Names", name: "alternate_names", widget: "list", allow_add: true,
+            field: {label: "Alternate Name", name: "alt_name", widget: "string"}
+         }
+      - {name: "usual_role",
+         label: "Usual Role",
+         widget: "select",
+         options: ["Artist", "Composer", "Conductor", "Musician", "Performer", "Performing Group", "Recording Engineer", "Vocalist", "Writer"]
+         }
+         
+  - name: "release"
+    label: "Releases"
+    label_singular: "Release"
+    folder: "content/data/release"
+    extension: "json"
+    format: "json"
+    create: true
+    fields:
+      - {label: "Title of Release", name: "title", widget: "string"}
+      - {label: "Label", name: "label", widget: "string"}
+      - {label: "Catalogue Numbers", label_singular: "Catalogue Number", name: "catalogue_numbers", widget: "list", allow_add: true,
+            field: {label: "Catalogue Number", name: "catalogue_number", widget: "string"}
+         }
+      - {label: "Release Type", name: "release_type", widget: "select", default: "Commercial", options: ["Commercial", "Prova"]}
+      - {label: "Record Count", name: "record_count", widget: "number", default: 1, valueType: "int"}
+      - {label: "Media Type",
+         name: "media_type",
+         widget: "select",
+         default: 1,
+         options: ["Shellac disc [10 inch]",
+                   "Shellac disc [12 inch]",
+                   "Vinyl recording",
+                   "Wax Cylinder"]
+                   }
+      - {label: "Artist", name: "artist", widget: "relation",
+         collection: "agent", 
+         searchFields: ["name"],
+         valueField: "name",
+         displayFields: ["name"],
+         multiple: true
+         }
+         
+  - name: "track"
+    label: "Tracks"
+    label_singular: "Track"
+    folder: "content/data/track"
+    extension: "json"
+    format: "json"
+    create: true
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Record Side", name: "record_side", widget: "string"}
+      - {label: "Track Number", name: "track_number", multiple: true, widget: "string"}
+      - {label: "Musical Work",
+         name: "work",
+         widget: "relation",
+         collection: "musicalwork", 
+         searchFields: ["genre", "name"],
+         valueField: "name",
+         displayFields: ["genre", "name"]
+         }
+      - {label: "Artists and Contributors",
+         name: "contributors",
+         widget: "list",
+         allow_add: true,
+         fields: [
+            {name: "contributor_role",
+             label: "Role",
+             widget: "select",
+             options: ["Artist", "Composer", "Conductor", "Musician", "Performer", "Performing Group", "Recording Engineer", "Vocalist", "Writer"]
+            },
+            {name: "contributor",
+             label: "Contributor",
+             widget: "relation",
+             collection: "agent", 
+             searchFields: ["name"],
+             valueField: "name",
+             displayFields: ["name"]}
+             ]
+         }
+         
